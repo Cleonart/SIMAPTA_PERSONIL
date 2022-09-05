@@ -28,11 +28,15 @@
           </v-dialog>
         </v-layout>
       </div>
-      <div>
-        <p><strong>Absensi Samapta</strong></p>
-        <p>{{ date }}</p>
+    </div>
+    <div style="margin-top: -25px; padding: 0px 20px; display: flex">
+      <div style="width: 50%">
+        <p style="margin: 0"><strong>Absensi Samapta</strong></p>
+        <p style="margin: 0">{{ date }}</p>
       </div>
-      <h1>{{ time }}</h1>
+      <div style="width: 50%">
+        <h1 style="margin: 0; text-align: right">{{ time }}</h1>
+      </div>
     </div>
   </div>
 </template>
@@ -78,7 +82,7 @@ export default {
     const app = this;
     setInterval(function () {
       app.time = moment().format("HH:mm:ss");
-      app.date = moment().format("DD, MMMM, YYYY");
+      app.date = moment().format("DD MMMM YYYY");
     }, 1000);
   },
   mounted() {

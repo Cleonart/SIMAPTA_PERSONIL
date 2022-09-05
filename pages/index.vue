@@ -72,11 +72,21 @@
     </div> -->
     <!-- [END] Scrollmenu dari Rekap Absen -->
 
-    <h3 style="margin-top: 20px">Jadwal Penugasan Hari ini</h3>
+    <h3 style="margin-top: 20px">Jadwal Penugasan Anda</h3>
+    <v-alert
+      v-if="surat_tugas.length <= 0"
+      border="top"
+      style="margin-top: 20px"
+      colored-border
+      type="info"
+      elevation="2"
+    >
+      Belum ada jadwal penugasan untuk anda saat ini
+    </v-alert>
 
     <v-card
       class="mt-6"
-      v-for="item in personil.surat_tugas_ids"
+      v-for="item in surat_tugas"
       :key="item.surat_tugas.nomor_registrasi"
     >
       <v-card-text>
@@ -84,7 +94,7 @@
           <v-col>
             <p class="text-caption mb-0">NOMOR SURAT TUGAS</p>
             <p class="text-caption font-weight-bold">
-              {{ item.surat_tugas.nomor_registrasi }}
+              {{ item.surat_tugas.nomor_sprint }}
             </p>
             <p class="text-caption mb-0">TIPE PENUGASAN</p>
             <p class="text-caption font-weight-bold">
@@ -102,13 +112,15 @@
                 moment(item.surat_tugas.tanggal_selesai).format("DD/MM/YYYY")
               }}
             </p>
-            <v-btn
-              :disabled="true"
-              x-small
-              color="primary"
-              style="margin: 10px 0px 0px 0px"
-              >LIHAT SURAT TUGAS</v-btn
-            >
+            <a href="/api">
+              <v-btn
+                :disabled="true"
+                x-small
+                color="primary"
+                style="margin: 10px 0px 0px 0px"
+                >LIHAT SURAT TUGAS
+              </v-btn>
+            </a>
           </v-col>
         </v-row>
       </v-card-text>
@@ -118,6 +130,7 @@
 
 <script scoped>
 import usePersonil from "../api/usePersonil";
+import useSuratTugasPersonil from "../api/useSuratTugasPersonil";
 import moment from "moment";
 
 export default {
@@ -125,10 +138,24 @@ export default {
     bulan: ["Januari 2022", "Februari 2022", "Maret 2022", "April 2022"],
     moment: moment,
     personil: {},
+    surat_tugas: {},
     namaPersonil: {},
   }),
 
   methods: {
+    async getSuratTugasData() {
+      const app = this;
+      const response = await useSuratTugasPersonil.findMany({
+        where: {
+          personil_id: app.personil.id,
+          surat_tugas: {
+            status: "valid",
+          },
+        },
+        include: { surat_tugas: true },
+      });
+      this.surat_tugas = response.data.response.records;
+    },
     ambilDataDariApiPersonil() {
       const token = sessionStorage.getItem("token");
       const payload = {
@@ -150,7 +177,7 @@ export default {
       const app = this;
       usePersonil.findMany(payload).then((response) => {
         app.personil = response.data.response.records[0];
-        console.log(response);
+        app.getSuratTugasData();
       });
     },
   },
