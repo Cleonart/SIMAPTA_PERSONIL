@@ -3,6 +3,23 @@
     <h3 class="mt-8">Selamat Datang,</h3>
     <h1 class="mt-2">{{ personil.nama_display }}</h1>
 
+    <v-bottom-sheet v-model="sheet">
+      <v-sheet>
+        <div class="px-10 pt-10" style="margin-bottom: 10px">
+          <h2>Tambah Laporan Temuan</h2>
+          <p>Daftarkan laporan temuan anda melalui form ini</p>
+
+          <v-text-field label="Kejadian yang ditemukan"></v-text-field>
+          <v-text-field label="Uraian singkat kejadian"></v-text-field>
+          <v-text-field label="Tindakan yang dilakukan  "></v-text-field>
+        </div>
+        <div class="px-10 pb-10">
+          <v-btn color="primary">Simpan Laporan</v-btn>
+          <v-btn text color="red" @click="sheet = !sheet"> close </v-btn>
+        </div>
+      </v-sheet>
+    </v-bottom-sheet>
+
     <!-- <v-row style="margin-top: 15px">
       <v-col>
         <h3 class="font-weight-bold">Rekap Absensi</h3>
@@ -96,6 +113,25 @@
             <p class="text-caption font-weight-bold">
               {{ item.surat_tugas.nomor_sprint }}
             </p>
+            <v-btn
+              x-small
+              color="primary"
+              @click="sheet = true"
+              style="margin: -10px 0px 20px 0px"
+            >
+              Masukan Laporan
+            </v-btn>
+            <a
+              :href="
+                current_host +
+                '/api/report/warrant_letter?surat_tugas_id=' +
+                item.surat_tugas.id
+              "
+            >
+              <v-btn x-small color="primary" style="margin: -10px 0px 20px 0px">
+                LIHAT SURAT TUGAS
+              </v-btn>
+            </a>
             <p class="text-caption mb-0">TIPE PENUGASAN</p>
             <p class="text-caption font-weight-bold">
               {{ item.surat_tugas.tipe_penugasan }}
@@ -112,15 +148,6 @@
                 moment(item.surat_tugas.tanggal_selesai).format("DD/MM/YYYY")
               }}
             </p>
-            <a href="/api">
-              <v-btn
-                :disabled="true"
-                x-small
-                color="primary"
-                style="margin: 10px 0px 0px 0px"
-                >LIHAT SURAT TUGAS
-              </v-btn>
-            </a>
           </v-col>
         </v-row>
       </v-card-text>
@@ -132,6 +159,7 @@
 import usePersonil from "../api/usePersonil";
 import useSuratTugasPersonil from "../api/useSuratTugasPersonil";
 import moment from "moment";
+import env from "../env";
 
 export default {
   data: () => ({
@@ -140,6 +168,8 @@ export default {
     personil: {},
     surat_tugas: {},
     namaPersonil: {},
+    current_host: {},
+    sheet: false,
   }),
 
   methods: {
@@ -185,6 +215,7 @@ export default {
     if (sessionStorage.getItem("token") == undefined) {
       location.href = "/login";
     }
+    this.current_host = env.CURRENT_HOST;
     this.ambilDataDariApiPersonil();
   },
 };
