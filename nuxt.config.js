@@ -2,7 +2,7 @@ import colors from "vuetify/es5/util/colors";
 
 export default {
   server: {
-    port: 3001, // default: 3000
+    port: 3000, // default: 3000
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
